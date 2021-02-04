@@ -1,38 +1,121 @@
-.App {
+@import url('https://fonts.googleapis.com/css2?family=Bowlby+One+SC&display=swap');
+
+#gamecontainer {
+  width: 100%;
+}
+
+h1 {
+  font-family: 'Bowlby One SC', cursive;
+  text-align: center;
+  -webkit-text-stroke-width: 1px;
+  -webkit-text-stroke-color: #00247d;
+  color: white;
+  margin-bottom: 0;
+}
+
+h2 {
+  font-family: 'Bowlby One SC', cursive;
+  text-align: center;
+  -webkit-text-stroke-width: 1px;
+  -webkit-text-stroke-color: #cf142b;
+  color: white;
+  margin: 0;
+  margin-bottom: 2em;
+}
+
+body{
+  font-family: 'Bowlby One SC', cursive;
+  color: #00247d;
+
+  overflow:hidden;
+}
+
+#flag {
+  width: 99%;
+  border-style: solid;
   text-align: center;
 }
 
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
+#endscreenflag {
+  width: 30%;
+  border-style: solid;
+  text-align: center;
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
-}
-
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
+#instructions {
   display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
+  width: 99%;
+  height: 59.5vh;
+  border-style: solid;
+  text-align: center;
+}
+
+#introtext {
+  margin-top: 3em;
+  text-align: center;
+  width: 80%;
+  margin-left: 10%;
+
+}
+
+#scoretext{
+  margin: auto;
+}
+
+#startgame {
+  position: absolute;
+  display: flex;
+  top: 42.5%;
+  height: 15%;
+  width: 30%;
+  left: 35%;
+  background-color: #cf142b;
   color: white;
+
+
 }
 
-.App-link {
-  color: #61dafb;
+#starttext {
+  margin: auto auto;
 }
 
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
+#flagcheck {
+  display:none;
+}
+#timer {
+  margin-top: 1em;
+  width: 99%;
+  height: 2em;
+  border-style: solid;
+}
+#timerbar {
+  height: 100%;
+  background-color: #00247d;
+}
+.buttons {
+  margin-top: 1em;
+  border-style: solid;
+  border-color: white;
+  width: 99%;
+  display: flex;
+  justify-content: space-between;
+}
+.colorbutton {
+  width: 31%;
+  height: 3em;
+  border-style: solid;
+}
+
+
+
+.selectedcolor {
+  border-color: green;
+
+}
+@media only screen and (min-width: 768px) {
+  #gamecontainer {
+    width: 768px;
+    margin: 0 auto;
+
   }
 }
