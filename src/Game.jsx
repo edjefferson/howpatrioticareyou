@@ -1,8 +1,8 @@
 import React, { useRef, useEffect, useState } from 'react';
 import Canvas from './Canvas';
 import TimerBar from './TimerBar';
-import flag from './perfectflag.png'
-import music from './rb.mp3'
+import flag from './images/perfectflag.png'
+import music from './media/rb.mp3'
 
 import { TwitterShareButton } from "react-share";
 
