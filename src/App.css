@@ -1,33 +1,71 @@
 @import url('https://fonts.googleapis.com/css2?family=Bowlby+One+SC&display=swap');
 
-#gamecontainer {
+
+#gamebackground {
+  margin-top: 3em;
   width: 100%;
+  height: 30vh;
+  background-color: yellow;
+  background:url('background.png');
+  background-repeat: no-repeat; 
+  background-size: 100% auto;
+}
+
+
+
+#gamecontainer {
+  position: absolute;
+  top: 10em;
+  width: 80%;
+  left: 10%;
 }
 
 h1 {
+  position: absolute;
+  top: 0;
+  left: 0;
   font-family: 'Bowlby One SC', cursive;
   text-align: center;
   -webkit-text-stroke-width: 1px;
   -webkit-text-stroke-color: #00247d;
   color: white;
   margin-bottom: 0;
+  width: 100%;
 }
 
 h2 {
+  position: absolute;
+  top: 3em;
+  width: 100%;
+
+  left: 0;
   font-family: 'Bowlby One SC', cursive;
   text-align: center;
   -webkit-text-stroke-width: 1px;
   -webkit-text-stroke-color: #cf142b;
   color: white;
   margin: 0;
-  margin-bottom: 2em;
 }
 
+canvas {
+  background-color: white;
+  touch-action: none;
+}
 body{
+  touch-action: none;
+
   font-family: 'Bowlby One SC', cursive;
   color: #00247d;
+  padding: 0;
+  margin: 0;
+  overflow-y:hidden;
+  overflow-x:hidden;
 
-  overflow:hidden;
+  background-color: blue;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
 }
 
 #flag {
@@ -45,13 +83,16 @@ body{
 #instructions {
   display: flex;
   width: 99%;
-  height: 59.5vh;
+  height: 47.5vw;
   border-style: solid;
   text-align: center;
+  overflow:hidden;
+  background-color: white;
+
 }
 
 #introtext {
-  margin-top: 3em;
+  margin-top: 12%;
   text-align: center;
   width: 80%;
   margin-left: 10%;
@@ -65,8 +106,8 @@ body{
 #startgame {
   position: absolute;
   display: flex;
-  top: 42.5%;
-  height: 15%;
+  top: 47.5%;
+  height: 18%;
   width: 30%;
   left: 35%;
   background-color: #cf142b;
@@ -87,15 +128,26 @@ body{
   width: 99%;
   height: 2em;
   border-style: solid;
+  background-color: lightblue;
 }
 #timerbar {
   height: 100%;
   background-color: #00247d;
 }
+
+.endbutton{
+  width: 40%;
+  margin-left: 30%;
+  margin-top: 0.5em;
+
+  margin-bottom: 0.5em;
+  background-color: #00247d;
+  color: white;
+}
 .buttons {
   margin-top: 1em;
   border-style: solid;
-  border-color: white;
+  border-color: blue;
   width: 99%;
   display: flex;
   justify-content: space-between;
@@ -112,10 +164,60 @@ body{
   border-color: green;
 
 }
+
+ a:visited {
+    color:white;
+    text-decoration:none;
+
+  }
+  .twitter-share-button {
+    color:white;
+    text-decoration:none;
+  }
+
+@media only screen and (max-width: 550px) {
+  h2 {
+    top: 18%;
+  }
+
+  #instructions {
+    height: 300px;
+  }
+
+  #startgame {
+  
+  width: 60%;
+  left: 20%;
+  
+
+
+}
+}
+
 @media only screen and (min-width: 768px) {
-  #gamecontainer {
+  #gamebackground {
+    position:relative;
     width: 768px;
     margin: 0 auto;
+    margin-top: 1.5em;
+    
+  }
 
+ 
+  #gamecontainer {
+    position:absolute;
+
+    width: 616px;
+    left: 74px;
+    height: 400px;
+  }
+
+  #instructions {
+    height: 400px;
+  }
+
+  #introtext {
+    width: 60%;
+    margin-left: 20%;
   }
 }

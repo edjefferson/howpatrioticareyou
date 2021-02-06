@@ -1,10 +1,12 @@
 import React, { useRef, useEffect, useState } from 'react';
 import Canvas from './Canvas';
 import TimerBar from './TimerBar';
-
+import flag from './perfectflag.png'
+import { TwitterShareButton } from "react-share";
 
 const Game = () => {
-
+  const [instructions,setInstructions] = useState([])
+  
 
 
 
@@ -27,12 +29,17 @@ const Game = () => {
   const updateCanvas = () => {
 
     if (gameState === 1 && Date.now()-startTime < timerLength) {
-      //
+      //setCanvasGridData(() =>{ return gridData})
     } else
     if (gameState === 1) {
 
       setGameState(2)
     }
+  }
+  const tryAgain = () => {
+    setGridData(initialGrid())
+
+    setGameState(0)
   }
 
   const initialGrid = () => {
@@ -45,18 +52,16 @@ const Game = () => {
   }
 
   const [gridData, setGridData] = useState(initialGrid());
-  const [canvasGridData, setCanvasGridData] = useState(initialGrid());
   const [selectedColor, setSelectedColor] = useState(1);
   const [targetFlag, setTargetFlag] = useState(0)
   const [lastTouch,setLastTouch] = useState(0)
   const [gameState,setGameState] = useState(0)
   const [startTime,setStartTime] = useState(0)
 
-  const timerLength = 60000
+  const timerLength = 10000
 
 
   useEffect(() => {
-    setCanvasGridData(() =>{ return gridData})
 
     if (gameState === 1) {
       const rgbcolors = {
@@ -72,7 +77,6 @@ const Game = () => {
         canvas.height = cheight * 10;
         var img = new Image();
         img.onload = () => {
-          console.log("comparison image load")
           ctx2.drawImage(img, 0, 0);
 
           for (let step = 0; step < cheight*cwidth; step++) {
@@ -102,119 +106,59 @@ const Game = () => {
         img.onerror = () => {
           console.log("image loaderror")
         }
-        img.src = 'perfectflag.png';
+        img.src = flag;
 
 
         //setTargetFlag([])
       }
     }
-  },[targetFlag,gameState, gridData])
 
-  const mouseDown = (e) => {
-    let newXValue = Math.floor(cwidth*(e.clientX-e.target.offsetLeft)/e.target.clientWidth)
-    let newYValue = Math.floor(cheight*(e.clientY-e.target.offsetTop)/e.target.clientHeight)
-    setGridData(gridData => {
-      let newGridData = [...gridData]
-      if (newYValue >= 0 && newXValue >= 0 && newYValue < cwidth && newXValue < cheight){
-        newGridData[newYValue * cwidth +newXValue] = selectedColor
-      }
-      return newGridData
-    })
+    
+  },[targetFlag,gameState, gridData, instructions])
 
-  }
+
   const compareFlags = () => {
     let correctPixels = 0
 
-    canvasGridData.forEach( (d,i) => {
+    gridData.forEach( (d,i) => {
       if (d === targetFlag[i]) {
         correctPixels += 1
       }
     })
-    return (correctPixels/canvasGridData.length)
+
+    let score = 8.7214 *Math.log(correctPixels/gridData.length) + 11.38
+    if (score > 10) {
+      score = 10
+    } else
+    if (score < 0) {
+      score = 0
+    }
+
+    return (score)
   }
  
 
-  const bline = (x0, y0, x1, y1) => {
-    let linePoints = []
-    let dx = Math.abs(x1 - x0),
-    sx = x0 < x1 ? 1 : -1;
-    let dy = Math.abs(y1 - y0),
-    sy = y0 < y1 ? 1 : -1;
-    let err = (dx > dy ? dx : -dy) / 2;
-    while (true) {
-        linePoints.push([Math.floor(x0), Math.floor(y0)]);
-        if (Math.abs(x0-x1) < 1 && Math.abs(y0-y1) < 1) break
-        
 
-        let e2 = err;
-        if (e2 > -dx) {
-            err -= dy;
-            x0 += sx;
-        }
-        if (e2 < dy) {
-            err += dx;
-            y0 += sy;
-        }
-    }
-    return(linePoints)
-}
-
-  const handleMovement = (e) => {
-    let newXValue = cwidth*(e.clientX-e.target.offsetLeft)/e.target.clientWidth
-    let newYValue = cheight*(e.clientY-e.target.offsetTop)/e.target.clientHeight
-    let oldXValue = lastTouch ? lastTouch[0] : newXValue
-    let oldYValue = lastTouch ? lastTouch[1] : newYValue
-
-    setGridData(gridData => {
-      let newGridData = [...gridData]
-      let line = bline(oldXValue,oldYValue,newXValue,newYValue)
-      line.forEach(c => {
-        if (c[1] >= 0 && c[0] >= 0 && c[1] < cheight && c[0] < cwidth){
-          newGridData[c[1] * cwidth +c[0]] = selectedColor
-        }
-      })
-      return newGridData
-    })
-    setLastTouch([newXValue,newYValue])
-  }
-
-  const mouseMove = (e) => {
-    if (e.buttons) {
-      
-      handleMovement(e)
-    } else
-    if (e.touches) {
-      Array.from(e.touches).forEach(t => {
-        handleMovement(e)
-      })
-    } 
-  }
-  const mouseUp = (e) => {
-    setLastTouch(0)
-  }
-
-  const colorSelect = (e) => {
-    setSelectedColor(parseInt(e.target.id))
-  }
 
   const startDraw = () => {
     setGameState(1)
-
     setStartTime(Date.now())
   }
   
 
+  const colorSelect = (e) => {
+    setSelectedColor(parseInt(e.target.id))
+  }
   const stateDisplay = () => {
     if (gameState === 1) {
       return (
         <>
-        <Canvas gameState={gameState} colors={colors} gridData={canvasGridData} mouseUp={mouseUp} mouseDown={mouseDown} mouseMove={mouseMove} rectSize={rectSize} cheight={cheight} cwidth={cwidth}/>
+        <Canvas gameState={gameState} colors={colors} instructions={instructions} rectSize={rectSize} cheight={cheight} cwidth={cwidth}/>
       <div className="buttons">
         {[colors.red,colors.white,colors.blue].map ((x,i) => {return (
       <div key={i} className={ i + 1 === selectedColor ? "colorbutton selectedcolor" : "colorbutton"} onClick={colorSelect} id={(i+ 1).toString()}  style={{ backgroundColor: x}}></div>
             )})   }
         </div>
-    <TimerBar updateCanvas={updateCanvas} startTime={startTime} timerLength={timerLength}/>
      
 
   <canvas id="flagcheck" width="500" height="300" ref={targetCanvasRef} >dd</canvas>
@@ -225,16 +169,20 @@ const Game = () => {
       return (
         <div id="instructions">
           <div id="scoretext"><div>Thankyou for paying respect!</div>
-          <Canvas gameState={gameState} colors={colors} gridData={canvasGridData} rectSize={rectSize} cheight={cheight} cwidth={cwidth}/>
+          <Canvas gameState={gameState} colors={colors} instructions={instructions} rectSize={rectSize} cheight={cheight} cwidth={cwidth}/>
 
-            <div>You have scored {Math.round(1000*compareFlags())/10 + "% patriotisms!"}</div>
+            <div>You have scored {Math.round(10*compareFlags())/10 + " patriotisms out of 10!"}</div>
+            <div className="endButtons"><div onClick={tryAgain} className="endbutton">Try Again</div><div className="endbutton">
+              
+            <TwitterShareButton url="https://edjefferson.com/howpatrioticareyou" title={"My drawing of a flag scored "+ Math.round(10*compareFlags())/10 +" patriotisms out of 10!"}>Tweet</TwitterShareButton>
+              </div></div>
           </div>
         </div>
       )
     } else {
       return (
       <div id="instructions">
-        <div id="introtext">Please demonstrate respect for your country by correctly drawing flag.</div>
+        <div id="introtext">Please demonstrate respect for your country by correctly drawing flag</div>
         <div id="startgame" onClick={startDraw}><div id="starttext">Click To Pay Respect</div></div>
       </div>
       )
@@ -244,10 +192,10 @@ const Game = () => {
   return (
 
   <>
-  <h1>HOW PATRIOTIC ARE YOU?</h1>
-  <h2>[UK EDITION]</h2>
+
   {stateDisplay()}
-    
+  <TimerBar gameState={gameState} updateCanvas={updateCanvas} startTime={startTime} timerLength={timerLength}/>
+
    </>
   )
 }

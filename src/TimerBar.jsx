@@ -3,7 +3,7 @@ import React, {useRef, useState, useEffect} from 'react';
 const TimerBar = props => {
 
   const [lastAnimated,setLastAnimated]  = useState(0)
-
+  const [curTime,setCurTime] = useState(0)
 
   const useAnimationFrame = callback => {
     const requestRef = useRef();
@@ -25,13 +25,16 @@ const TimerBar = props => {
 
   useAnimationFrame(deltaTime => {
     if (Date.now()-lastAnimated > 1000/33) {
-      props.updateCanvas()
-      setLastAnimated(Date.now())
+      setCurTime(Date.now()-props.startTime)
+      //props.updateCanvas()
+      //setLastAnimated(Date.now())
     }
-  })
+  },[])
 
-  return (<div id="timer">
-  <div id="timerbar" style={{width: 100 * (Date.now()-props.startTime)/props.timerLength + "%"}}></div>
+  return (<div style={{
+    display: props.gameState === 1 ? "block" : "none"
+  }}  id="timer">
+  <div id="timerbar" style={{width: 100 * (curTime)/props.timerLength + "%"}}></div>
   </div>)
 }
 
