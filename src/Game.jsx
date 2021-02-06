@@ -29,7 +29,7 @@ const Game = () => {
   const [gameState,setGameState] = useState(0)
   const [startTime,setStartTime] = useState(0)
   const [soundToggle,setSoundToggle] = useState(1)
-  const timerLength = 1000
+  const timerLength = 60000
 
  
 
