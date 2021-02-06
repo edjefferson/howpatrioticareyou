@@ -5,15 +5,15 @@ import flag from './perfectflag.png'
 import { TwitterShareButton } from "react-share";
 
 const Game = () => {
-  const [instructions,setInstructions] = useState([])
-  
+  const [selectedColor, setSelectedColor] = useState(1);
+  const [targetFlag, setTargetFlag] = useState(0)
+  const [gameState,setGameState] = useState(0)
+  const [startTime,setStartTime] = useState(0)
 
-
-
+  const timerLength = 10000
   const cheight = 30
   const cwidth = 50
-  const rectSize = 200
-
+  const rectSize = 10
 
   const targetCanvasRef = useRef(null)
 
@@ -37,28 +37,9 @@ const Game = () => {
     }
   }
   const tryAgain = () => {
-    setGridData(initialGrid())
 
     setGameState(0)
   }
-
-  const initialGrid = () => {
-    let grid = []
-  
-    for (let step = 0; step < cheight*cwidth; step++) {
-      grid.push(2)
-    }
-    return grid
-  }
-
-  const [gridData, setGridData] = useState(initialGrid());
-  const [selectedColor, setSelectedColor] = useState(1);
-  const [targetFlag, setTargetFlag] = useState(0)
-  const [lastTouch,setLastTouch] = useState(0)
-  const [gameState,setGameState] = useState(0)
-  const [startTime,setStartTime] = useState(0)
-
-  const timerLength = 10000
 
 
   useEffect(() => {
@@ -114,19 +95,15 @@ const Game = () => {
     }
 
     
-  },[targetFlag,gameState, gridData, instructions])
+  },[targetFlag,gameState])
 
 
   const compareFlags = () => {
     let correctPixels = 0
 
-    gridData.forEach( (d,i) => {
-      if (d === targetFlag[i]) {
-        correctPixels += 1
-      }
-    })
+    
 
-    let score = 8.7214 *Math.log(correctPixels/gridData.length) + 11.38
+    let score = 8.7214 *Math.log(correctPixels/1) + 11.38
     if (score > 10) {
       score = 10
     } else
@@ -153,7 +130,7 @@ const Game = () => {
     if (gameState === 1) {
       return (
         <>
-        <Canvas gameState={gameState} colors={colors} instructions={instructions} rectSize={rectSize} cheight={cheight} cwidth={cwidth}/>
+        <Canvas currentColor={selectedColor} gameState={gameState} colors={colors} rectSize={rectSize} cheight={cheight} cwidth={cwidth}/>
       <div className="buttons">
         {[colors.red,colors.white,colors.blue].map ((x,i) => {return (
       <div key={i} className={ i + 1 === selectedColor ? "colorbutton selectedcolor" : "colorbutton"} onClick={colorSelect} id={(i+ 1).toString()}  style={{ backgroundColor: x}}></div>
@@ -169,7 +146,7 @@ const Game = () => {
       return (
         <div id="instructions">
           <div id="scoretext"><div>Thankyou for paying respect!</div>
-          <Canvas gameState={gameState} colors={colors} instructions={instructions} rectSize={rectSize} cheight={cheight} cwidth={cwidth}/>
+          <Canvas gameState={gameState} colors={colors}f rectSize={rectSize} cheight={cheight} cwidth={cwidth}/>
 
             <div>You have scored {Math.round(10*compareFlags())/10 + " patriotisms out of 10!"}</div>
             <div className="endButtons"><div onClick={tryAgain} className="endbutton">Try Again</div><div className="endbutton">

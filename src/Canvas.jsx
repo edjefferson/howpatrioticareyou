@@ -54,9 +54,20 @@ const Canvas = props => {
   };
   
   const drawRect = (coords) => {
+
     const canvas = canvasRef.current
     const ctx = canvas.getContext('2d')
-    
+    if (currentColor === 1) {
+      ctx.fillStyle = colors.red
+    } else 
+    if (currentColor === 2) {
+      ctx.fillStyle = colors.white
+    } else 
+    if (currentColor === 3) {
+      ctx.fillStyle = colors.blue
+    } else {
+      ctx.fillStyle = "#000000"
+    }
     ctx.fillRect(rectSize * Math.floor(coords[0]),rectSize*Math.floor(coords[1]), rectSize , rectSize);
 }
 

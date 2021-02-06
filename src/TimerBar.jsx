@@ -26,8 +26,8 @@ const TimerBar = props => {
   useAnimationFrame(deltaTime => {
     if (Date.now()-lastAnimated > 1000/33) {
       setCurTime(Date.now()-props.startTime)
-      //props.updateCanvas()
-      //setLastAnimated(Date.now())
+      props.updateCanvas()
+      setLastAnimated(Date.now())
     }
   },[])
 
