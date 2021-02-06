@@ -91,7 +91,7 @@ body{
 #endscreenflag {
   border-style: solid;
   text-align: center;
-  width: 60%;
+  width: 30vh;
 }
 
 #instructions {
@@ -104,7 +104,6 @@ body{
   overflow:hidden;
   align-items: center;
   flex-direction: column;
-
   background-color: white;
   justify-content: center;
 
@@ -122,11 +121,10 @@ body{
 
 #startgame {
   display: flex;
-  padding: 1em;
+  padding: 2vh;
+  font-size: 5vh;
   background-color: #cf142b;
   color: white;
-
-
 }
 
 #starttext {
@@ -152,6 +150,8 @@ body{
   margin-top: 0.5em;
   margin-bottom: 0.5em;
   background-color: #00247d;
+  font-size: 4vh;
+  padding: 1vh;
   color: white;
 }
 .buttons {
@@ -217,9 +217,25 @@ body{
 
     }
 
+    #endscreenflag {
+      width: 30vw;
+    }
+
     #gamebackground {
       height: 90vw;
       background-size: auto 80vw;
+    }
+
+    .endbutton{
+
+      font-size: 4vw;
+      padding: 1vw;
+    }
+
+    #startgame {
+      padding: 2vw;
+      font-size: 5vw;
+     
     }
   }
 

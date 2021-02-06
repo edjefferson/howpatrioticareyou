@@ -250,7 +250,7 @@ const Game = () => {
     if (gameState === 2) {
       return (
         <div id="instructions">
-          <div id="scoretext"><div>Thankyou for paying respect!</div>
+          <div>Thankyou for paying respect!</div>
           <Canvas gameState={gameState} colors={colors} gridData={gridData} rectSize={rectSize} cheight={cheight} cwidth={cwidth}/>
 
             <div>You have scored {Math.round(10*compareFlags())/10 + " patriotisms out of 10!"}</div>
@@ -258,7 +258,7 @@ const Game = () => {
               
           { false ? <TwitterShareButton url="https://edjefferson.com/howpatrioticareyou" title={"My drawing of a flag scored "+ Math.round(10*compareFlags())/10 +" patriotisms out of 10!"}>Tweet</TwitterShareButton> : null}
               </div>
-          </div>
+          
         </div>
       )
     } else {
