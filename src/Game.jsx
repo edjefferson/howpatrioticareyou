@@ -16,7 +16,6 @@ const Game = () => {
 
   const initialGrid = () => {
     let grid = []
-  
     for (let step = 0; step < cheight*cwidth; step++) {
       grid.push(2)
     }
@@ -30,7 +29,7 @@ const Game = () => {
   const [gameState,setGameState] = useState(0)
   const [startTime,setStartTime] = useState(0)
   const [soundToggle,setSoundToggle] = useState(1)
-  const timerLength = 60000
+  const timerLength = 1000
 
  
 
@@ -45,27 +44,18 @@ const Game = () => {
   }
 
  
-
   const updateCanvas = () => {
-
-    if (gameState === 1 && Date.now()-startTime < timerLength) {
-      //setCanvasGridData(() =>{ return gridData})
-    } else
-    if (gameState === 1) {
+    if (gameState === 1 && Date.now()-startTime >= timerLength) {
       audio.pause()
       setGameState(2)
     }
   }
   const tryAgain = () => {
     setGridData(initialGrid())
-
     setGameState(0)
   }
 
   
-
-
-
 
   useEffect(() => {
 
@@ -94,7 +84,6 @@ const Game = () => {
             let pixelData = Array.from(ctx2.getImageData(5 + x * 10 , 5 + y * 10, 1, 1).data)
           
             if (JSON.stringify(pixelData) === JSON.stringify(rgbcolors.red)) {
-
               targetFlagData.push(1)
             } else
             if (JSON.stringify(pixelData) === JSON.stringify(rgbcolors.white)) {
@@ -116,36 +105,12 @@ const Game = () => {
         img.src = flag;
 
 
-        //setTargetFlag([])
+        
       }
     }
   },[targetFlag,gameState, gridData])
 
-  
 
-  const getCoordinates = (e) => {
-    let bounds = e.target.getBoundingClientRect()
-    let newXValue = Math.floor(cwidth*(e.clientX-bounds.x)/e.target.clientWidth)
-    let newYValue = Math.floor(cheight*(e.clientY-bounds.y)/e.target.clientHeight)
-    return [newXValue,newYValue]
-  }
-  const mouseDown = (e) => {
-
-    let [newXValue,newYValue] = getCoordinates(e)
-
-    setGridData(gridData => {
-      let newGridData = [...gridData]
-      if (newYValue >= 0 && newXValue >= 0 && newXValue < cwidth && newYValue < cheight){
-        newGridData[newYValue * cwidth +newXValue] = selectedColor
-      }
-      return newGridData
-    })
-    setLastTouch([newXValue,newYValue])
-
-  }
-
-
-  
   const compareFlags = () => {
     let correctPixels = 0
 
@@ -162,8 +127,7 @@ const Game = () => {
     if (score < 0) {
       score = 0
     }
-
-    return (score)
+    return score
   }
  
 
@@ -175,23 +139,22 @@ const Game = () => {
     sy = y0 < y1 ? 1 : -1;
     let err = (dx > dy ? dx : -dy) / 2;
     while (x0 && y0) {
-        linePoints.push([x0,y0]);
-        if ((Math.abs(x0-x1) < 1 && Math.abs(y0-y1) < 1)) break
-        
-
-        let e2 = err;
-        if (e2 > -dx) {
-            err -= dy;
-            x0 += sx;
-        }
-        if (e2 < dy) {
-            err += dx;
-            y0 += sy;
-        }
+      linePoints.push([x0,y0]);
+      if ((Math.abs(x0-x1) < 1 && Math.abs(y0-y1) < 1)) break
+      
+      let e2 = err;
+      if (e2 > -dx) {
+          err -= dy;
+          x0 += sx;
+      }
+      if (e2 < dy) {
+          err += dx;
+          y0 += sy;
+      }
     }
     linePoints.push([x1,y1]);
     return(linePoints)
-}
+  }
 
   const handleMovement = (e, lastTouch) => {
     let [newXValue,newYValue] = getCoordinates(e)
@@ -215,20 +178,38 @@ const Game = () => {
     return [newXValue,newYValue]
   }
 
+  const getCoordinates = (e) => {
+    let bounds = e.target.getBoundingClientRect()
+    let newXValue = Math.floor(cwidth*(e.clientX-bounds.x)/e.target.clientWidth)
+    let newYValue = Math.floor(cheight*(e.clientY-bounds.y)/e.target.clientHeight)
+    return [newXValue,newYValue]
+  }
+  const mouseDown = (e) => {
 
+    let [newXValue,newYValue] = getCoordinates(e)
+
+    setGridData(gridData => {
+      let newGridData = [...gridData]
+      if (newYValue >= 0 && newXValue >= 0 && newXValue < cwidth && newYValue < cheight){
+        newGridData[newYValue * cwidth +newXValue] = selectedColor
+      }
+      return newGridData
+    })
+    setLastTouch([newXValue,newYValue])
+
+  }
 
 
 
   const mouseMove = (e) => {
-
     if (e.buttons) {
       setLastTouch(handleMovement(e,lastTouch))
     } else
     if (e.touches) {
-      
       setLastTouch(handleMovement(e.touches[0],lastTouch))
     } 
   }
+
   const mouseUp = (e) => {
     setLastTouch(0)
   }
