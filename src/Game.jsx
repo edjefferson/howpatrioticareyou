@@ -3,17 +3,15 @@ import Canvas from './Canvas';
 import TimerBar from './TimerBar';
 import flag from './perfectflag.png'
 import { TwitterShareButton } from "react-share";
-
 const Game = () => {
-  const [selectedColor, setSelectedColor] = useState(1);
-  const [targetFlag, setTargetFlag] = useState(0)
-  const [gameState,setGameState] = useState(0)
-  const [startTime,setStartTime] = useState(0)
 
-  const timerLength = 10000
+
+
+
   const cheight = 30
   const cwidth = 50
   const rectSize = 10
+
 
   const targetCanvasRef = useRef(null)
 
@@ -37,9 +35,28 @@ const Game = () => {
     }
   }
   const tryAgain = () => {
+    setGridData(initialGrid())
 
     setGameState(0)
   }
+
+  const initialGrid = () => {
+    let grid = []
+  
+    for (let step = 0; step < cheight*cwidth; step++) {
+      grid.push(2)
+    }
+    return grid
+  }
+
+  const [gridData, setGridData] = useState(initialGrid());
+  const [selectedColor, setSelectedColor] = useState(1);
+  const [targetFlag, setTargetFlag] = useState(0)
+  const [lastTouch,setLastTouch] = useState(0)
+  const [gameState,setGameState] = useState(0)
+  const [startTime,setStartTime] = useState(0)
+
+  const timerLength = 10000
 
 
   useEffect(() => {
@@ -58,6 +75,7 @@ const Game = () => {
         canvas.height = cheight * 10;
         var img = new Image();
         img.onload = () => {
+          console.log("comparison image load")
           ctx2.drawImage(img, 0, 0);
 
           for (let step = 0; step < cheight*cwidth; step++) {
@@ -93,17 +111,37 @@ const Game = () => {
         //setTargetFlag([])
       }
     }
+  },[targetFlag,gameState, gridData])
 
-    
-  },[targetFlag,gameState])
+  
+  const mouseDown = (e) => {
+    let bounds = e.target.getBoundingClientRect()
+
+    let newXValue = Math.floor(cwidth*(e.clientX-bounds.x)/e.target.clientWidth)
+    let newYValue = Math.floor(cheight*(e.clientY-bounds.y)/e.target.clientHeight)
+    console.log([newXValue,newYValue])
 
 
+    setGridData(gridData => {
+      let newGridData = [...gridData]
+      if (newYValue >= 0 && newXValue >= 0 && newXValue < cwidth && newYValue < cheight){
+        newGridData[newYValue * cwidth +newXValue] = selectedColor
+      }
+      return newGridData
+    })
+    setLastTouch([newXValue,newYValue])
+
+  }
   const compareFlags = () => {
     let correctPixels = 0
 
-    
+    gridData.forEach( (d,i) => {
+      if (d === targetFlag[i]) {
+        correctPixels += 1
+      }
+    })
 
-    let score = 8.7214 *Math.log(correctPixels/1) + 11.38
+    let score = 8.7214 *Math.log(correctPixels/gridData.length) + 11.38
     if (score > 10) {
       score = 10
     } else
@@ -115,22 +153,99 @@ const Game = () => {
   }
  
 
+  const bline = (x0, y0, x1, y1) => {
+    let linePoints = []
+    let dx = Math.abs(x1 - x0),
+    sx = x0 < x1 ? 1 : -1;
+    let dy = Math.abs(y1 - y0),
+    sy = y0 < y1 ? 1 : -1;
+    let err = (dx > dy ? dx : -dy) / 2;
+    while (x0 && y0) {
 
+        linePoints.push([x0,y0]);
+        if ((Math.abs(x0-x1) < 1 && Math.abs(y0-y1) < 1)) break
+        
 
-  const startDraw = () => {
-    setGameState(1)
-    setStartTime(Date.now())
+        let e2 = err;
+        if (e2 > -dx) {
+            err -= dy;
+            x0 += sx;
+        }
+        if (e2 < dy) {
+            err += dx;
+            y0 += sy;
+        }
+    }
+    return(linePoints)
+}
+
+  const handleMovement = (e, lastTouch) => {
+
+    let bounds = e.target.getBoundingClientRect()
+
+    let newXValue = Math.floor(cwidth*(e.clientX-bounds.x)/e.target.clientWidth)
+    let newYValue = Math.floor(cheight*(e.clientY-bounds.y)/e.target.clientHeight)
+    let line
+    if (lastTouch && lastTouch[0] && !(lastTouch[0] === newXValue && lastTouch[1] === newYValue)) {
+      let oldXValue = lastTouch[0]
+      let oldYValue = lastTouch[1]
+      console.log(oldXValue,oldYValue,newXValue,newYValue)
+      line = bline(oldXValue,oldYValue,newXValue,newYValue)
+      setGridData(gridData => {
+        let newGridData = [...gridData]
+        line.forEach(c => {
+          if (c[1] >= 0 && c[0] >= 0 && c[1] < cheight && c[0] < cwidth){
+            newGridData[c[1] * cwidth +c[0]] = selectedColor
+          }
+        })
+        return newGridData
+      })
+    } else if (!lastTouch || !lastTouch[0]){
+      line = [[newXValue,newYValue]]
+      setGridData(gridData => {
+        let newGridData = [...gridData]
+        line.forEach(c => {
+          if (c[1] >= 0 && c[0] >= 0 && c[1] < cheight && c[0] < cwidth){
+            console.log(c[0],c[1])
+            newGridData[c[1] * cwidth +c[0]] = selectedColor
+          }
+        })
+        return newGridData
+      })
+     
+    }
+    return [newXValue,newYValue]
   }
-  
+
+  const mouseMove = (e) => {
+    if (e.buttons) {
+      setLastTouch(handleMovement(e,lastTouch))
+    } else
+    if (e.touches) {
+      console.log(e)
+      setLastTouch(handleMovement(e.touches[0],lastTouch))
+    } 
+  }
+  const mouseUp = (e) => {
+    //setLastTouch(0)
+  }
 
   const colorSelect = (e) => {
     setSelectedColor(parseInt(e.target.id))
   }
+
+  const startDraw = () => {
+    setGameState(1)
+
+    setStartTime(Date.now())
+  }
+  
+
   const stateDisplay = () => {
     if (gameState === 1) {
       return (
         <>
-        <Canvas currentColor={selectedColor} gameState={gameState} colors={colors} rectSize={rectSize} cheight={cheight} cwidth={cwidth}/>
+        <Canvas gameState={gameState} colors={colors} gridData={gridData} mouseUp={mouseUp} mouseDown={mouseDown} mouseMove={mouseMove} rectSize={rectSize} cheight={cheight} cwidth={cwidth}/>
       <div className="buttons">
         {[colors.red,colors.white,colors.blue].map ((x,i) => {return (
       <div key={i} className={ i + 1 === selectedColor ? "colorbutton selectedcolor" : "colorbutton"} onClick={colorSelect} id={(i+ 1).toString()}  style={{ backgroundColor: x}}></div>
@@ -146,7 +261,7 @@ const Game = () => {
       return (
         <div id="instructions">
           <div id="scoretext"><div>Thankyou for paying respect!</div>
-          <Canvas gameState={gameState} colors={colors}f rectSize={rectSize} cheight={cheight} cwidth={cwidth}/>
+          <Canvas gameState={gameState} colors={colors} gridData={gridData} rectSize={rectSize} cheight={cheight} cwidth={cwidth}/>
 
             <div>You have scored {Math.round(10*compareFlags())/10 + " patriotisms out of 10!"}</div>
             <div className="endButtons"><div onClick={tryAgain} className="endbutton">Try Again</div><div className="endbutton">
