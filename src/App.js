@@ -1,4 +1,4 @@
-import Game from './Game.jsx'
+import Game from './components/Game.jsx'
 import './App.css';
 
 function App() {
