@@ -2,7 +2,7 @@ import React, { useRef, useEffect, useState } from 'react';
 import Canvas from './Canvas';
 import TimerBar from './TimerBar';
 import flag from './perfectflag.png'
-import music from './rbc.mp3'
+import music from './rb.mp3'
 
 import { TwitterShareButton } from "react-share";
 
@@ -122,13 +122,16 @@ const Game = () => {
   },[targetFlag,gameState, gridData])
 
   
-  const mouseDown = (e) => {
-    let bounds = e.target.getBoundingClientRect()
 
+  const getCoordinates = (e) => {
+    let bounds = e.target.getBoundingClientRect()
     let newXValue = Math.floor(cwidth*(e.clientX-bounds.x)/e.target.clientWidth)
     let newYValue = Math.floor(cheight*(e.clientY-bounds.y)/e.target.clientHeight)
+    return [newXValue,newYValue]
+  }
+  const mouseDown = (e) => {
 
-
+    let [newXValue,newYValue] = getCoordinates(e)
 
     setGridData(gridData => {
       let newGridData = [...gridData]
@@ -140,6 +143,9 @@ const Game = () => {
     setLastTouch([newXValue,newYValue])
 
   }
+
+
+  
   const compareFlags = () => {
     let correctPixels = 0
 
@@ -169,7 +175,6 @@ const Game = () => {
     sy = y0 < y1 ? 1 : -1;
     let err = (dx > dy ? dx : -dy) / 2;
     while (x0 && y0) {
-
         linePoints.push([x0,y0]);
         if ((Math.abs(x0-x1) < 1 && Math.abs(y0-y1) < 1)) break
         
@@ -189,38 +194,24 @@ const Game = () => {
 }
 
   const handleMovement = (e, lastTouch) => {
+    let [newXValue,newYValue] = getCoordinates(e)
 
-    let bounds = e.target.getBoundingClientRect()
-
-    let newXValue = Math.floor(cwidth*(e.clientX-bounds.x)/e.target.clientWidth)
-    let newYValue = Math.floor(cheight*(e.clientY-bounds.y)/e.target.clientHeight)
-    let line
-    if (lastTouch && lastTouch[0] && !(lastTouch[0] === newXValue && lastTouch[1] === newYValue)) {
-      let oldXValue = lastTouch[0]
-      let oldYValue = lastTouch[1]
-      line = bline(oldXValue,oldYValue,newXValue,newYValue)
-      setGridData(gridData => {
-        let newGridData = [...gridData]
-        line.forEach(c => {
-          if (c[1] >= 0 && c[0] >= 0 && c[1] < cheight && c[0] < cwidth){
-            newGridData[c[1] * cwidth +c[0]] = selectedColor
-          }
-        })
-        return newGridData
+    setGridData(gridData => {
+      let newGridData = [...gridData]
+      let line = []
+      if (lastTouch && lastTouch[0] && !(lastTouch[0] === newXValue && lastTouch[1] === newYValue)) {
+        let [oldXValue,oldYValue] = lastTouch
+        line = bline(oldXValue,oldYValue,newXValue,newYValue)
+      } else if (!lastTouch || !lastTouch[0]){
+        line = [[newXValue,newYValue]]  
+      }
+      line.forEach(c => {
+        if (c[1] >= 0 && c[0] >= 0 && c[1] < cheight && c[0] < cwidth){
+          newGridData[c[1] * cwidth +c[0]] = selectedColor
+        }
       })
-    } else if (!lastTouch || !lastTouch[0]){
-      line = [[newXValue,newYValue]]
-      setGridData(gridData => {
-        let newGridData = [...gridData]
-        line.forEach(c => {
-          if (c[1] >= 0 && c[0] >= 0 && c[1] < cheight && c[0] < cwidth){
-            newGridData[c[1] * cwidth +c[0]] = selectedColor
-          }
-        })
-        return newGridData
-      })
-     
-    }
+      return newGridData
+    })
     return [newXValue,newYValue]
   }
 
