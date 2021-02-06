@@ -33,7 +33,7 @@ const Canvas = props => {
     
   },[gridData,prevGrid,cwidth,cheight,rectSize,colors])
   if (props.gameState === 1) {
-    return (<canvas ref={canvasRef} id="flag" width={cwidth * rectSize} height={cheight * rectSize}  onMouseDown={props.mouseDown}  onTouchStart={props.mouseDown} onMouseUp={props.mouseUp} onTouchMove={props.mouseMove} onMouseMove={props.mouseMove}></canvas>)
+    return (<canvas ref={canvasRef} id="flag" width={cwidth * rectSize} height={cheight * rectSize} onMouseDown={props.mouseDown}  onTouchStart={props.mouseDown} onMouseUp={props.mouseUp} onTouchMove={props.mouseMove} onMouseMove={props.mouseMove}></canvas>)
   } else {
   return (<canvas ref={canvasRef} id="endscreenflag" width={cwidth * rectSize} height={cheight * rectSize} ></canvas>)
 

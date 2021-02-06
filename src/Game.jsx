@@ -2,15 +2,37 @@ import React, { useRef, useEffect, useState } from 'react';
 import Canvas from './Canvas';
 import TimerBar from './TimerBar';
 import flag from './perfectflag.png'
+import music from './rb.mp3'
+
 import { TwitterShareButton } from "react-share";
+
+
+const audio = new Audio(music)
+
 const Game = () => {
-
-
-
-
   const cheight = 30
   const cwidth = 50
   const rectSize = 10
+
+  const initialGrid = () => {
+    let grid = []
+  
+    for (let step = 0; step < cheight*cwidth; step++) {
+      grid.push(2)
+    }
+    return grid
+  }
+
+  const [gridData, setGridData] = useState(initialGrid());
+  const [selectedColor, setSelectedColor] = useState(1);
+  const [targetFlag, setTargetFlag] = useState(0)
+  const [lastTouch,setLastTouch] = useState(0)
+  const [gameState,setGameState] = useState(0)
+  const [startTime,setStartTime] = useState(0)
+  const [soundToggle,setSoundToggle] = useState(1)
+  const timerLength = 60000
+
+ 
 
 
   const targetCanvasRef = useRef(null)
@@ -30,7 +52,7 @@ const Game = () => {
       //setCanvasGridData(() =>{ return gridData})
     } else
     if (gameState === 1) {
-
+      audio.pause()
       setGameState(2)
     }
   }
@@ -40,23 +62,9 @@ const Game = () => {
     setGameState(0)
   }
 
-  const initialGrid = () => {
-    let grid = []
   
-    for (let step = 0; step < cheight*cwidth; step++) {
-      grid.push(2)
-    }
-    return grid
-  }
 
-  const [gridData, setGridData] = useState(initialGrid());
-  const [selectedColor, setSelectedColor] = useState(1);
-  const [targetFlag, setTargetFlag] = useState(0)
-  const [lastTouch,setLastTouch] = useState(0)
-  const [gameState,setGameState] = useState(0)
-  const [startTime,setStartTime] = useState(0)
 
-  const timerLength = 10000
 
 
   useEffect(() => {
@@ -75,7 +83,7 @@ const Game = () => {
         canvas.height = cheight * 10;
         var img = new Image();
         img.onload = () => {
-          console.log("comparison image load")
+          //console.log("comparison image load")
           ctx2.drawImage(img, 0, 0);
 
           for (let step = 0; step < cheight*cwidth; step++) {
@@ -103,7 +111,7 @@ const Game = () => {
 
         }
         img.onerror = () => {
-          console.log("image loaderror")
+          //console.log("image loaderror")
         }
         img.src = flag;
 
@@ -119,7 +127,7 @@ const Game = () => {
 
     let newXValue = Math.floor(cwidth*(e.clientX-bounds.x)/e.target.clientWidth)
     let newYValue = Math.floor(cheight*(e.clientY-bounds.y)/e.target.clientHeight)
-    console.log([newXValue,newYValue])
+
 
 
     setGridData(gridData => {
@@ -176,6 +184,7 @@ const Game = () => {
             y0 += sy;
         }
     }
+    linePoints.push([x1,y1]);
     return(linePoints)
 }
 
@@ -189,7 +198,6 @@ const Game = () => {
     if (lastTouch && lastTouch[0] && !(lastTouch[0] === newXValue && lastTouch[1] === newYValue)) {
       let oldXValue = lastTouch[0]
       let oldYValue = lastTouch[1]
-      console.log(oldXValue,oldYValue,newXValue,newYValue)
       line = bline(oldXValue,oldYValue,newXValue,newYValue)
       setGridData(gridData => {
         let newGridData = [...gridData]
@@ -206,7 +214,6 @@ const Game = () => {
         let newGridData = [...gridData]
         line.forEach(c => {
           if (c[1] >= 0 && c[0] >= 0 && c[1] < cheight && c[0] < cwidth){
-            console.log(c[0],c[1])
             newGridData[c[1] * cwidth +c[0]] = selectedColor
           }
         })
@@ -217,17 +224,22 @@ const Game = () => {
     return [newXValue,newYValue]
   }
 
+
+
+
+
   const mouseMove = (e) => {
+
     if (e.buttons) {
       setLastTouch(handleMovement(e,lastTouch))
     } else
     if (e.touches) {
-      console.log(e)
+      
       setLastTouch(handleMovement(e.touches[0],lastTouch))
     } 
   }
   const mouseUp = (e) => {
-    //setLastTouch(0)
+    setLastTouch(0)
   }
 
   const colorSelect = (e) => {
@@ -236,8 +248,14 @@ const Game = () => {
 
   const startDraw = () => {
     setGameState(1)
-
+    audio.currentTime = 0
+    audio.play()
     setStartTime(Date.now())
+  }
+
+  const audioToggle = () => {
+    setSoundToggle(soundToggle => {return soundToggle ? 0 : 1})
+    audio.volume = audio.volume > 0 ? 0 : 1
   }
   
 
@@ -264,10 +282,10 @@ const Game = () => {
           <Canvas gameState={gameState} colors={colors} gridData={gridData} rectSize={rectSize} cheight={cheight} cwidth={cwidth}/>
 
             <div>You have scored {Math.round(10*compareFlags())/10 + " patriotisms out of 10!"}</div>
-            <div className="endButtons"><div onClick={tryAgain} className="endbutton">Try Again</div><div className="endbutton">
+            <div onClick={tryAgain} className="endbutton">Try Again</div><div className="endbutton">
               
-            <TwitterShareButton url="https://edjefferson.com/howpatrioticareyou" title={"My drawing of a flag scored "+ Math.round(10*compareFlags())/10 +" patriotisms out of 10!"}>Tweet</TwitterShareButton>
-              </div></div>
+          { false ? <TwitterShareButton url="https://edjefferson.com/howpatrioticareyou" title={"My drawing of a flag scored "+ Math.round(10*compareFlags())/10 +" patriotisms out of 10!"}>Tweet</TwitterShareButton> : null}
+              </div>
           </div>
         </div>
       )
@@ -287,7 +305,7 @@ const Game = () => {
 
   {stateDisplay()}
   <TimerBar gameState={gameState} updateCanvas={updateCanvas} startTime={startTime} timerLength={timerLength}/>
-
+   <div style={{color: "white"}} onClick={audioToggle}>{soundToggle ? "SOUND ON" : "SOUND OFF"}</div>
    </>
   )
 }

@@ -1,50 +1,62 @@
 @import url('https://fonts.googleapis.com/css2?family=Bowlby+One+SC&display=swap');
 
 
-#gamebackground {
-  margin-top: 3em;
-  width: 100%;
-  height: 30vh;
-  background-color: yellow;
-  background:url('background.png');
-  background-repeat: no-repeat; 
-  background-size: 100% auto;
+#credits {
+  position:absolute;
+  bottom: 0%;
+  z-index: -1;
+}
+#credits a{
+  color: white;
+  text-decoration: none;
 }
 
+#credits a.visited{
+  color: white;
+  text-decoration: none;
+}
+#gamebackground {
+
+  width: 100%;
+  
+  background:url('background.png');
+  background-repeat: no-repeat; 
+  height: 95vh;
+  background-size: auto 100vh;
+  background-position: center;
+
+}
 
 
 #gamecontainer {
-  position: absolute;
-  top: 10em;
-  width: 80%;
-  left: 10%;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  align-items:center;
 }
 
 h1 {
-  position: absolute;
-  top: 0;
-  left: 0;
+  font-size: 5vh;
+  padding: 2vh;
+  margin: 0;
   font-family: 'Bowlby One SC', cursive;
   text-align: center;
   -webkit-text-stroke-width: 1px;
   -webkit-text-stroke-color: #00247d;
   color: white;
-  margin-bottom: 0;
-  width: 100%;
 }
 
 h2 {
-  position: absolute;
-  top: 3em;
-  width: 100%;
+  padding: 0;
+  margin: 0;
+  font-size: 4vh;
 
-  left: 0;
+
   font-family: 'Bowlby One SC', cursive;
   text-align: center;
   -webkit-text-stroke-width: 1px;
   -webkit-text-stroke-color: #cf142b;
   color: white;
-  margin: 0;
 }
 
 canvas {
@@ -58,7 +70,7 @@ body{
   color: #00247d;
   padding: 0;
   margin: 0;
-  overflow-y:hidden;
+  overflow-y:scroll;
   overflow-x:hidden;
 
   background-color: blue;
@@ -68,34 +80,39 @@ body{
   user-select: none;
 }
 
+
 #flag {
-  width: 99%;
   border-style: solid;
   text-align: center;
+  width: 99vh;
+  height: 59.1vh;
 }
 
 #endscreenflag {
-  width: 30%;
   border-style: solid;
   text-align: center;
+  width: 60%;
 }
 
 #instructions {
   display: flex;
-  width: 99%;
-  height: 47.5vw;
+  width: 100vh;
+  height:60vh;
+  max-height: 100vh;
   border-style: solid;
   text-align: center;
   overflow:hidden;
+  align-items: center;
+  flex-direction: column;
+
   background-color: white;
+  justify-content: center;
 
 }
 
 #introtext {
-  margin-top: 12%;
   text-align: center;
-  width: 80%;
-  margin-left: 10%;
+  
 
 }
 
@@ -104,12 +121,8 @@ body{
 }
 
 #startgame {
-  position: absolute;
   display: flex;
-  top: 47.5%;
-  height: 18%;
-  width: 30%;
-  left: 35%;
+  padding: 1em;
   background-color: #cf142b;
   color: white;
 
@@ -124,9 +137,9 @@ body{
   display:none;
 }
 #timer {
-  margin-top: 1em;
-  width: 99%;
-  height: 2em;
+  margin-top: 1vh;
+  width: 90vh;
+  height: 2vh;
   border-style: solid;
   background-color: lightblue;
 }
@@ -136,25 +149,22 @@ body{
 }
 
 .endbutton{
-  width: 40%;
-  margin-left: 30%;
   margin-top: 0.5em;
-
   margin-bottom: 0.5em;
   background-color: #00247d;
   color: white;
 }
 .buttons {
-  margin-top: 1em;
+  margin-top: 1vh;
   border-style: solid;
   border-color: blue;
-  width: 99%;
+  width: 90vh;
   display: flex;
   justify-content: space-between;
 }
 .colorbutton {
   width: 31%;
-  height: 3em;
+  height: 3vh;
   border-style: solid;
 }
 
@@ -175,49 +185,78 @@ body{
     text-decoration:none;
   }
 
-@media only screen and (max-width: 550px) {
-  h2 {
-    top: 18%;
+  @media (max-aspect-ratio: 330/325) {
+    .buttons {
+      width: 90vw;
+    }
+
+    #timer {
+      width: 90vw;
+    }
+
+
+    #flag {
+      width: 99vw;
+      height: 59.1vw;
+    }
+
+    h1 {
+      font-size: 7vw;
+      padding: 0;
+
+    }
+
+    h2 {
+      font-size: 4vw;
+    }
+
+    #instructions {
+      width: 99vw;
+      height: 59.1vw;
+      
+
+    }
+
+    #gamebackground {
+      height: 90vw;
+      background-size: auto 80vw;
+    }
   }
 
-  #instructions {
-    height: 300px;
+  @media (max-aspect-ratio: 330/325) and (min-width: 700px) {
+    .buttons {
+      width: 90vw;
+    }
+
+    #timer {
+      width: 90vw;
+    }
+
+
+    #flag {
+      width: 80vw;
+      height: 48vw;
+    }
+
+    h1 {
+      font-size: 7vw;
+      padding: 0;
+
+    }
+
+    h2 {
+      font-size: 4vw;
+    }
+
+    #instructions {
+      width: 80vw;
+      height: 48vw;
+      
+
+    }
+
+    #gamebackground {
+      height: 90vw;
+      background-size: auto 80vw;
+    }
   }
-
-  #startgame {
-  
-  width: 60%;
-  left: 20%;
-  
-
-
-}
-}
-
-@media only screen and (min-width: 768px) {
-  #gamebackground {
-    position:relative;
-    width: 768px;
-    margin: 0 auto;
-    margin-top: 1.5em;
-    
-  }
-
- 
-  #gamecontainer {
-    position:absolute;
-
-    width: 616px;
-    left: 74px;
-    height: 400px;
-  }
-
-  #instructions {
-    height: 400px;
-  }
-
-  #introtext {
-    width: 60%;
-    margin-left: 20%;
-  }
-}

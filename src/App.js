@@ -8,6 +8,9 @@ function App() {
         <h2>[UK EDITION]</h2>
       <div id="gamecontainer">
         <Game />
+        <div id="credits">
+      <a href="https://edjefferson.com">edjefferson.com</a>
+    </div>
       </div>
     </div>
   );
