@@ -84,8 +84,8 @@ body{
 #flag {
   border-style: solid;
   text-align: center;
-  width: 99vh;
-  height: 59.1vh;
+  width: 97vh;
+  height: 58.2vh;
 }
 
 #endscreenflag {
@@ -150,7 +150,7 @@ body{
   margin-top: 0.5em;
   margin-bottom: 0.5em;
   background-color: #00247d;
-  font-size: 4vh;
+  font-size: 3vh;
   padding: 1vh;
   color: white;
 }
@@ -196,8 +196,8 @@ body{
 
 
     #flag {
-      width: 99vw;
-      height: 59.1vw;
+      width: 95vw;
+      height: 57vw;
     }
 
     h1 {
@@ -211,8 +211,8 @@ body{
     }
 
     #instructions {
-      width: 99vw;
-      height: 59.1vw;
+      width: 95vw;
+      height: 57vw;
       
 
     }
@@ -228,7 +228,7 @@ body{
 
     .endbutton{
 
-      font-size: 4vw;
+      font-size: 3vw;
       padding: 1vw;
     }
 

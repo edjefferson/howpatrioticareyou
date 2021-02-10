@@ -3,6 +3,7 @@ import React, {useRef, useEffect, useState} from 'react';
 const Canvas = props => {
   const cwidth = props.cwidth
   const cheight = props.cheight
+  const gameState = props.gameState
   const rectSize = props.rectSize
   const colors = props.colors
   const gridData = props.gridData
@@ -10,8 +11,12 @@ const Canvas = props => {
   const [prevGrid, setPrevGrid] = useState(0)
   const canvasRef = useRef(null)
 
-  useEffect(() => {
 
+  useEffect(() => {
+    const canvas = canvasRef.current
+    const ctx = canvas.getContext('2d')
+
+    
     const setColor = (dataPoint) => {
       if (dataPoint === 1) {
         ctx.fillStyle = colors.red
@@ -26,8 +31,6 @@ const Canvas = props => {
       }
     }
 
-    const canvas = canvasRef.current
-    const ctx = canvas.getContext('2d')
 
     for (let i = 0; i < gridData.length; i += 1) {
       if (!prevGrid || prevGrid[i] !== gridData[i]) {
@@ -40,7 +43,7 @@ const Canvas = props => {
     
   },[gridData,prevGrid,cwidth,cheight,rectSize,colors])
   
-  if (props.gameState === 1) {
+  if (gameState === 1) {
     return (<canvas ref={canvasRef} id="flag" width={cwidth * rectSize} height={cheight * rectSize} onMouseDown={props.mouseDown}  onTouchStart={props.mouseDown} onMouseUp={props.mouseUp} onTouchMove={props.mouseMove} onMouseMove={props.mouseMove}></canvas>)
   } else {
     return (<canvas ref={canvasRef} id="endscreenflag" width={cwidth * rectSize} height={cheight * rectSize} ></canvas>)

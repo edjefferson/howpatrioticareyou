@@ -4,11 +4,12 @@ import TimerBar from './TimerBar';
 import flag from '../images/perfectflag.png'
 import music from '../media/rb.mp3'
 
+
 import { TwitterShareButton } from "react-share";
 
 
 const audio = new Audio(music)
-
+audio.playbackRate = 1.5
 const Game = () => {
   const cheight = 30
   const cwidth = 50
@@ -28,8 +29,9 @@ const Game = () => {
   const [lastTouch,setLastTouch] = useState(0)
   const [gameState,setGameState] = useState(0)
   const [startTime,setStartTime] = useState(0)
+  const [score,setScore] = useState(0)
   const [soundToggle,setSoundToggle] = useState(1)
-  const timerLength = 60000
+  const timerLength = 30000
 
  
 
@@ -47,7 +49,27 @@ const Game = () => {
   const updateCanvas = () => {
     if (gameState === 1 && Date.now()-startTime >= timerLength) {
       audio.pause()
+      setScore(Math.round(10*compareFlags(targetFlag,gridData))/10)
       setGameState(2)
+      if (gridData && gridData.reduce((x,y) => x+y) !== 3000) {
+        fetch("https://bunkem.edjefferson.com/filing", {
+          method: "post",
+          headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            project_id: 1,
+            record: gridData
+          })
+        })
+        .then( (response) => { 
+          console.log(response)
+        })
+        .catch(error => {
+          console.error('Error:', error);
+        });
+      }
     }
   }
   const tryAgain = () => {
@@ -82,7 +104,6 @@ const Game = () => {
             let y = Math.floor(step / cwidth)
 
             let pixelData = Array.from(ctx2.getImageData(5 + x * 10 , 5 + y * 10, 1, 1).data)
-          
             if (JSON.stringify(pixelData) === JSON.stringify(rgbcolors.red)) {
               targetFlagData.push(1)
             } else
@@ -111,23 +132,28 @@ const Game = () => {
   },[targetFlag,gameState, gridData])
 
 
-  const compareFlags = () => {
-    let correctPixels = 0
+  const compareFlags = (flag_1,flag_2) => {
+    let newScore
+    if (flag_1) {
+      
+      let correctColors = [0,0,0]
+      let actualColors = [0,0,0]
+      flag_1.forEach( (d,i) => {
+        correctColors[d-1] += 1
+        if (d === flag_2[i]) {
+          actualColors[d-1] += 1
+        }
+      })
 
-    gridData.forEach( (d,i) => {
-      if (d === targetFlag[i]) {
-        correctPixels += 1
-      }
-    })
+      
+      let actualScore = 10 * (actualColors[0] + actualColors[2])/(correctColors[0] + correctColors[2])
+      newScore = -0.1 * Math.pow(actualScore,2) + (2 * actualScore)
 
-    let score = 8.7214 *Math.log(correctPixels/gridData.length) + 11.38
-    if (score > 10) {
-      score = 10
-    } else
-    if (score < 0) {
-      score = 0
+      if (newScore < 0) newScore = 0 
+      if (newScore > 10) newScore = 10
+    
     }
-    return score
+    return newScore
   }
  
 
@@ -235,7 +261,7 @@ const Game = () => {
     if (gameState === 1) {
       return (
         <>
-        <Canvas gameState={gameState} colors={colors} gridData={gridData} mouseUp={mouseUp} mouseDown={mouseDown} mouseMove={mouseMove} rectSize={rectSize} cheight={cheight} cwidth={cwidth}/>
+        <Canvas gameState={gameState} flag={flag} colors={colors} gridData={gridData} mouseUp={mouseUp} mouseDown={mouseDown} mouseMove={mouseMove} rectSize={rectSize} cheight={cheight} cwidth={cwidth}/>
       <div className="buttons">
         {[colors.red,colors.white,colors.blue].map ((x,i) => {return (
       <div key={i} className={ i + 1 === selectedColor ? "colorbutton selectedcolor" : "colorbutton"} onClick={colorSelect} id={(i+ 1).toString()}  style={{ backgroundColor: x}}></div>
@@ -253,10 +279,10 @@ const Game = () => {
           <div>Thankyou for paying respect!</div>
           <Canvas gameState={gameState} colors={colors} gridData={gridData} rectSize={rectSize} cheight={cheight} cwidth={cwidth}/>
 
-            <div>You have scored {Math.round(10*compareFlags())/10 + " patriotisms out of 10!"}</div>
+            <div>You have scored {score + " patriotisms out of 10!"}</div>
             <div onClick={tryAgain} className="endbutton">Try Again</div><div className="endbutton">
               
-          { false ? <TwitterShareButton url="https://edjefferson.com/howpatrioticareyou" title={"My drawing of a flag scored "+ Math.round(10*compareFlags())/10 +" patriotisms out of 10!"}>Tweet</TwitterShareButton> : null}
+          { true ? <TwitterShareButton url="https://edjefferson.com/howpatrioticareyou" title={"My drawing of a flag scored "+ score +" British patriotisms out of 10!"}>Tweet</TwitterShareButton> : null}
               </div>
           
         </div>
